@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>KONVERSI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+  </head>
+  <style>
+    body{
+      background-color:  #2d573b;
+      background-image: url("https://www.transparenttextures.com/patterns/dark-mosaic.png");
+      color: whitesmoke;
+    }
+    #footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+    .form-control, .form-select{
+      box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+      -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+      -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    }
+  </style>
+  <body>
+    <div class="container">
+      <center>
+        <div class="col-12 m-2">
+          <div class="row">
+            <div class="col-md-6" id="date-part"></div>
+            <div class="col-md-6" id="time-part"></div>
+          </div>
+          <h3>Konversi Temperatur</h3>
+          <div class="col-md-4 mt-5 mb-2">
+            <select class="form-select form-select-md md-6" name="from" id="from" onchange="select()">
+              <option value="cel">Celcius</option>
+              <option value="far">Farenheit</option>
+              <option value="rea">Reamur</option>
+            </select>
+          </div>
+          to
+          <div class="col-md-4 mt-2">
+            <select class="form-select" name="to" id="to" onchange="select()">
+              <option value="cel">Celcius</option>
+              <option value="far">Farenheit</option>
+              <option value="rea">Reamur</option>
+            </select>
+          </div>
+        </div>
+      </center>
+      <div class="row mt-5">
+        <div class="col-md-5 mt-2 mb-2">
+          <input
+                  type="number"
+                  id="inputNumb"
+                  class="form-control mb-6"
+                  placeholder="Masukkan Angka"
+                  onkeypress="validate(event)"
+                  onkeyup="konversi()"
+                  onchange="konversi()"
+          />
+        </div>
+        <div class="col-md-5 mt-2 mb-2">
+          <input
+                  type="number"
+                  id="resultKonv"
+                  class="form-control mb-4"
+                  placeholder="Hasil Konversi"
+                  disabled
+          />
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-secondary" onclick="reset()"><img src="https://img.icons8.com/ios-glyphs/30/000000/refresh--v1.png"/></button>
+        </div>
+      </div>
+
+    </div>
+    <div id="footer">
+
+      <div class="row">
+        <center>
+          <div class="col-md-4">
+            <div class="input-group mb-3">
+              <button class="btn btn-secondary" type="button" id="button-addon1" onclick="gantiWarna()">Ganti</button>
+              <input type="text" class="form-control" placeholder=" Ubah Warna Background" id="color" aria-label="Example text with button addon" aria-describedby="button-addon1">
+            </div>
+          </div>
+        </center>
+      </div>
+    </div>
+  </body>
+  <script src="./Konversi.js"></script>
+  <script>
+    $(function(){
+      setInterval(function () {
+        const momentNow = moment();
+        $("#date-part").html(
+          momentNow.format("YYYY MMMM DD") +
+            " " +
+            momentNow.format("dddd")
+        );
+        $("#time-part").html(momentNow.format("A hh:mm:ss"));
+      }, 100);
+    });
+
+    function validate(evt) {
+      var theEvent = evt || window.event;
+      if (theEvent.type === "paste") {
+        key = event.clipboardData.getData("text/plain");
+      } else {
+        var key = theEvent.keyCode || theEvent.which;
+        key = String.fromCharCode(key);
+      }
+      var regex = /[0-9]|\./;
+      if (!regex.test(key)) {
+        theEvent.returnValue = false;
+        if (theEvent.preventDefault) theEvent.preventDefault();
+      }
+    }
+
+    function gantiWarna() {
+      document.body.style.backgroundColor =
+              getId('color').value;
+    }
+    function reset(){
+      getId('inputNumb').value = '';
+      getId('resultKonv').value = '';
+    }
+    function select() {
+      konversi();
+    }
+
+    function getId(val) {
+      return document.getElementById(val);
+    }
+
+    function konversi() {
+      let res = '';
+      let from = getId('from').value;
+      let to = getId('to').value;
+      let input = getId('inputNumb').value;
+      let result = getId('resultKonv');
+      if (from === "cel") {
+        res = Konversi.fromCelcius(to, parseInt(input));
+        result.value = res;
+      }
+      if (from === "rea") {
+        res = Konversi.fromReamur(to, parseInt(input));
+        result.value = res;
+      }
+      if (from === "far") {
+        res = Konversi.fromFarenheit(to, parseInt(input));
+        result.value = res;
+      }
+    }
+
+  </script>
+</html>
